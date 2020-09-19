@@ -19,7 +19,7 @@ class TransactionWidget extends StatelessWidget {
               border: Border.all(width: 2, color: Colors.purple),
             ),
             child: Text(
-              '\$${_transaction.cost}',
+              '\$${_transaction.cost.toStringAsFixed(2)}',
               style: TextStyle(
                 color: Colors.purple,
                 fontWeight: FontWeight.bold,
