@@ -4,12 +4,13 @@ import 'package:intl/intl.dart';
 
 class TransactionWidget extends StatelessWidget {
   final Transaction _transaction;
+  final Function _delete;
 
-  TransactionWidget(this._transaction);
+  TransactionWidget(this._transaction, this._delete);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    Card(
       child: Row(
         children: [
           Container(
@@ -46,6 +47,29 @@ class TransactionWidget extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+
+    return Card(
+      elevation: 0.3,
+      child: ListTile(
+        leading: CircleAvatar(
+          radius: 30,
+          child: Padding(
+            padding: const EdgeInsets.all(6.0),
+            child: FittedBox(
+                child: Text('\$${_transaction.cost.toStringAsFixed(2)}')),
+          ),
+        ),
+        title: Text(_transaction.title),
+        subtitle: Text(DateFormat('EEE, M/d/y').format(_transaction.date)),
+        trailing: IconButton(
+          onPressed: () {
+            _delete(_transaction);
+          },
+          icon: Icon(Icons.delete),
+          color: Theme.of(context).errorColor,
+        ),
       ),
     );
   }

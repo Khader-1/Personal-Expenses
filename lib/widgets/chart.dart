@@ -6,16 +6,28 @@ import 'chart_bar.dart';
 class Chart extends StatelessWidget {
   final List _transactions;
 
+  double _bestWidth(context) {
+    double relative = MediaQuery.of(context).size.width - 20;
+    relative /= 7;
+    print(relative);
+    return 100 > relative ? relative : 100;
+  }
+
   Chart(this._transactions);
+
+  List get _recentWeek {
+    return _transactions.where((element) {
+      return (element.date.isAfter(DateTime.now().subtract(Duration(days: 7))));
+    }).toList();
+  }
 
   List<Map<String, Object>> get _weekData {
     final today = DateTime.now();
     return List.generate(7, (index) {
       final theOtherday = today.subtract(Duration(days: index));
       double sum = 0;
-      _transactions.forEach((element) {
-        if (element.date.isAfter(theOtherday.subtract(Duration(days: 7))) &&
-            element.date.day == theOtherday.day) {
+      _recentWeek.forEach((element) {
+        if (element.date.day == theOtherday.day) {
           sum += element.cost;
         }
       });
@@ -38,10 +50,14 @@ class Chart extends StatelessWidget {
       child: Card(
         elevation: 6,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: List<Widget>.generate(
             weekData.length,
             (index) {
-              return Bar(weekData.elementAt(index), sum);
+              return Container(
+                width: _bestWidth(context),
+                child: Bar(weekData.elementAt(6 - index), sum),
+              );
             },
           ),
         ),

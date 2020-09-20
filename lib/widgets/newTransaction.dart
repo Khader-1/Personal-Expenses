@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class NewTransaction extends StatelessWidget {
+class NewTransaction extends StatefulWidget {
   final Function _add;
-  final _titleController = TextEditingController();
-  final _costController = TextEditingController();
+
   NewTransaction(this._add);
+
+  @override
+  _NewTransactionState createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+  final _titleController = TextEditingController();
+
+  final _costController = TextEditingController();
+
+  DateTime _date;
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +40,48 @@ class NewTransaction extends StatelessWidget {
               hintText: 'Specify the Cost here',
             ),
           ),
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _date == null
+                    ? 'No date choosen'
+                    : DateFormat('EEE, M/d/y').format(_date),
+                style: TextStyle(fontSize: 16),
+              ),
+              FlatButton(
+                  onPressed: () {
+                    showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime.now(),
+                    ).then((value) =>
+                        setState(() => _date = value == null ? _date : value));
+                  },
+                  child: Text(
+                    'Pick a date',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ))
+            ],
+          ),
           Padding(padding: EdgeInsets.all(10)),
-          TextButton(
-            onPressed: () {
-              _add(_titleController.text, double.parse(_costController.text));
-              Navigator.of(context).pop();
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('add transaction'),
+          Container(
+            alignment: AlignmentDirectional.centerEnd,
+            child: FlatButton(
+              onPressed: () {
+                widget._add(_titleController.text,
+                    double.parse(_costController.text), _date);
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'add transaction',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           )
         ],
